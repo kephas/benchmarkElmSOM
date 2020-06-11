@@ -1,56 +1,24 @@
 module Main exposing (..)
 
-import Browser
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
+import Benchmark exposing (..)
+import Benchmark.Runner exposing (BenchmarkProgram, program)
+import SumOfMultiplesLcm as Lcm
+import SumOfMultiplesNaive as Naive
 
 
----- MODEL ----
+doSumOfMultiples implementation =
+    \_ -> implementation [ 2, 4, 6, 9, 24 ] 200000
 
 
-type alias Model =
-    {}
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
-
-
-
----- UPDATE ----
-
-
-type Msg
-    = NoOp
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    ( model, Cmd.none )
-
-
-
----- VIEW ----
-
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+suite =
+    describe "SumOfMultiples"
+        [ benchmark "naive implementation" <|
+            doSumOfMultiples Naive.sumOfMultiples
+        , benchmark "LCM implementation" <|
+            doSumOfMultiples Lcm.sumOfMultiples
         ]
 
 
-
----- PROGRAM ----
-
-
-main : Program () Model Msg
+main : BenchmarkProgram
 main =
-    Browser.element
-        { view = view
-        , init = \_ -> init
-        , update = update
-        , subscriptions = always Sub.none
-        }
+    program suite
